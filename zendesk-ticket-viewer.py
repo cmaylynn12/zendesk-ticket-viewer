@@ -1,6 +1,5 @@
-import requests
-import sys
-import time
+import sys, time
+from zdesk import Zendesk, ZendeskError
 
 
 def menu():
@@ -9,26 +8,21 @@ def menu():
 
     while flag:
 
-        try:
-            print("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n"
-                  "Please enter one of the following options:\n\n   1. Display a single ticket\n   "
-                  "2. Display all tickets\n   "
-                  "3. Exit\n------------------------------------------")
+        print("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\n"
+              "Please enter one of the following options:\n\n   1. Display a single ticket\n   "
+              "2. Display all tickets\n   "
+              "3. Exit\n------------------------------------------")
 
-            selection = str(input("Option: "))
+        selection = str(input("Option: "))
 
-            if selection is "1" or selection is "2":
-                option(selection)
+        if selection is "1" or selection is "2":
+            option(selection)
 
-            elif selection is "3":
-                sys.exit()
+        elif selection is "3":
+            sys.exit()
 
-            else:
-                print("\nThe option you have entered is invalid, please try again.\n")
-
-        except SyntaxError:
-
-            print("Oops, there was no value entered. Please choose from the options.\n")
+        else:
+            print("\nThe option you have entered is invalid, please try again.")
 
 
 def option(choice):
@@ -36,66 +30,59 @@ def option(choice):
     if choice == "1":
 
         ticket_id = str(input("Please enter Ticket #: "))
-        print()
-        tix = data['tickets']
+        print("Searching database...")
 
-        id_list = []
+        try:
+            ticket = zendesk.ticket_show(id=ticket_id)['ticket']
+            print("\n------------------------------------------" +
+                  "\nTicket #" + str(ticket['id']) +
+                  "\nSubject: " + ticket['subject'] +
+                  "\nDescription: " + ticket['description'] +
+                  "\nUpdated at: " + str(ticket['updated_at'].split("T")[0]) +
+                  "\n------------------------------------------")
 
-        for ticket in tix:
-            id_list.append(str(ticket['id']))
-
-        if ticket_id in id_list:
-            print("------------------------------------------")
-            print("Ticket #" + str(ticket_id))
-            print("Subject: " + tix[int(ticket_id)-1]['subject'])
-            print("Description: " + tix[int(ticket_id)-1]['description'])
-            print("Updated at: " + tix[int(ticket_id)-1]['updated_at'].split("T")[0] + "\n")
-            print("------------------------------------------\n")
-
-        else:
-            print("Sorry, the ticket # is invalid, please try again.\n")
+        except ZendeskError:
+            print("\nSorry, the ticket # you have entered is invalid, please try again")
 
     elif choice == "2":
 
-        ticket_list = data['tickets']
-
+        ticket_list = zendesk.tickets_list()
+        tickets = ticket_list['tickets']
         print("\n------------------------------------------")
 
-        for ticket in ticket_list:
-            print("Ticket #" + str(ticket['id']))
-            print("Subject: " + ticket['subject'])
-            print("Description: " + ticket['description'])
-            print("Updated at: " + ticket['updated_at'].split("T")[0] + "\n\n")
+        for ticket in tickets:
+            print("Ticket #" + str(ticket['id']) +
+                  "\nSubject: " + ticket['subject'] +
+                  "\nDescription: " + ticket['description'] +
+                  "\nUpdated at: " + ticket['updated_at'].split("T")[0] + "\n")
 
-        print("------------------------------------------\n")
+        print("------------------------------------------")
 
 if __name__ == '__main__':
 
     print("\nLoading Zendesk Ticket Viewer...")
-
-    toolbar_width = 42
-
+    box = 42
     sys.stdout.flush()
 
-    for i in range(toolbar_width):
+    for i in range(box):
         time.sleep(0.05)
-        sys.stdout.write("▇")
+        sys.stdout.write("▉")
         sys.stdout.flush()
 
     sys.stdout.write("\n")
 
-    url = 'https://kmcha49.zendesk.com/api/v2/tickets.json'
+    url = 'https://kmcha49.zendesk.com'
     email = 'kmcha49@student.monash.edu'
     pwd = 'BCompSci2015'
 
-    print()
-    response = requests.get(url, auth=(email, pwd))
-
-    data = response.json()
-
-    if response.status_code != 200:
-        print('Status:', response.status_code, 'Problem with the request. Exiting.')
-        exit()
-
-    else:
+    try:
+        zendesk = Zendesk(url, email, pwd)
         menu()
+
+    except ZendeskError:
+        print("Sorry, the API is currently unavailable, please try again later.")
+
+
+
+
+
