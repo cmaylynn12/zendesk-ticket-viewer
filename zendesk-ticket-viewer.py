@@ -83,14 +83,9 @@ if __name__ == '__main__':
 
     sys.stdout.write("\n")
 
-    '''
-    url = 'https://kmcha49.zendesk.com'
-    email = 'kmcha49@student.monash.edu'
-    pwd = 'BCompSci2015'
-    '''
-    url = sys.argv[1]
-    email = sys.argv[2]
-    pwd = sys.argv[3]
+    url = sys.argv[1] #url = 'https://kmcha49.zendesk.com'
+    email = sys.argv[2] #email = 'kmcha49@student.monash.edu'
+    pwd = sys.argv[3] #pwd = 'BCompSci2015'
 
 
     try:  #attempts to initialise Zendesk account
