@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import sys, time
+sys.path.append('/Library/Frameworks/Python.framework/Versions/3.4/lib/python3.4/site-packages')
 from zdesk import Zendesk, ZendeskError
 
 
@@ -8,20 +12,21 @@ def menu():
 
     while flag:
 
-        print("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\n"
-              "Please enter one of the following options:\n\n   1. Display a single ticket\n   "
-              "2. Display all tickets\n   "
-              "3. Exit\n------------------------------------------")
+        try:
+            print("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\n"
+                  "Please enter one of the following options:\n\n   1. Display a single ticket\n   "
+                  "2. Display all tickets\n   "
+                  "3. Exit\n------------------------------------------")
 
-        selection = str(input("Option: "))
+            selection = str(input("Option: "))
 
-        if selection is "1" or selection is "2":
-            option(selection)
+            if selection is "1" or selection is "2":
+                option(selection)
 
-        elif selection is "3":
-            sys.exit()
+            elif selection is "3":
+                sys.exit()
 
-        else:
+        except SyntaxError:
             print("\nThe option you have entered is invalid, please try again.")
 
 
