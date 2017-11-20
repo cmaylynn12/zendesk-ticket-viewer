@@ -68,20 +68,30 @@ def option(choice):
 
 if __name__ == '__main__':
 
+    if len(sys.argv) < 4:
+      print("Error: 4 arguments required, only received " + str(len(sys.argv)) + "\n")
+      exit()
+
     print("\nLoading Zendesk Ticket Viewer...")
     box = 42
     sys.stdout.flush()
 
-    for i in range(box):
+    for i in range(box):  #performs loading boxes
         time.sleep(0.05)
         sys.stdout.write("▉")
         sys.stdout.flush()
 
     sys.stdout.write("\n")
 
+    '''
     url = 'https://kmcha49.zendesk.com'
     email = 'kmcha49@student.monash.edu'
     pwd = 'BCompSci2015'
+    '''
+    url = sys.argv[1]
+    email = sys.argv[2]
+    pwd = sys.argv[3]
+
 
     try:  #attempts to initialise Zendesk account
         zendesk = Zendesk(url, email, pwd)  #if successful
