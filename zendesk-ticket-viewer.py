@@ -5,92 +5,97 @@ import sys, time
 sys.path.append('/Library/Frameworks/Python.framework/Versions/3.4/lib/python3.4/site-packages')  #appends the path for modules to be used
 from zdesk import Zendesk, ZendeskError
 
-def menu():
+class ZendeskTicketViewer():
+
+
+  def __init__(self, url, email, password): 
+
+    self.url, self.email, self.password = url, email, password #initalises with url, email and password
+    self.zendesk = Zendesk(self.url, self.email, self.password) #Zendesk account
+    self.tickets_list = self.zendesk.tickets_list()['tickets']  #get key: ticket of tickets_list
+  
+  def display_all_tickets(self):  #displays all tickets available in the Zendesk account
+    
+    if len(self.tickets_list) > 0:  #continue only if there exist a ticket
+      print("------------------------------------------\n")
+      for ticket in self.tickets_list:  #loop through all tickets and prints id, subject, description and updated_at
+        print("Ticket #" + str(ticket['id']) + "\n" + "Subject: " + ticket['subject'] + "\n" + "Description: " + ticket['description'] + "\n" + "Updated at: " + ticket['updated_at'].split("T")[0] + "\n")
+      print("------------------------------------------")
+
+    else:
+      print("There are currently no tickets available") #if no ticket is available, print this
+
+  def display_one_ticket(self): #displays one ticket with a specific ticket_id, supplied by the user
 
     flag = True
 
-    while flag: #while option is not set i.e: empty option, option that is not in the list, repeat until option is chosen or 3 to exit
+    while flag:
+        
+      ticket_id = input("Please enter Ticket #: ")  #gets ticket_id from user
 
-        try:  #attempt to get an answer from user
-            print("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\n"  #displays menu to users
-                  "Please enter one of the following options:\n\n   1. Display a single ticket\n   "
-                  "2. Display all tickets\n   "
-                  "3. Exit\n------------------------------------------")
+      try:
+        if ticket_id == "B":  #if B, return to main menu
+          main()
+        
+        else:
+          ticket = self.zendesk.ticket_show(id=ticket_id)['ticket'] #obtain the ticket portion of tickets_list and print the ticket_id, subject, description and updated_at
+          print("------------------------------------------\n")
+          print("Ticket #" + str(ticket['id']) + "\n" + "Subject: " + ticket['subject'] + "\n" + "Description: " + ticket['description'] + "\n" + "Updated at: " + ticket['updated_at'].split("T")[0] + "\n")
+          print("------------------------------------------")
 
-            selection = str(input("Option: "))  #gets selection from user
-
-            if selection is "1" or selection is "2":  #if user selects 1 or 2
-                option(selection) #call option()
-
-            elif selection is "3":  #if user selects 3
-                sys.exit()  #exit the program
-
-            else: #if user selects any integer that's not in the list
-              print("\nSorry, the option you have selected is invalid, please select from the menu.") #print this statement
-
-        except SyntaxError: #catch error to prevent app from crashing, if user gives empty input or input that is not an integer
-            print("\nThe option you have entered is invalid, please try again.") #print this statement
-
-def option(choice):
-
-    if choice == "1": #if user selected 1
-      
-        ticket_id = str(input("Please enter Ticket #: ")) #get ticket id from user
-        print("Searching database...")
-      
-        try:  #attempt to find ticket with id, ticked_id
+          repeat_flag = True
           
-          ticket = zendesk.ticket_show(id=ticket_id)['ticket']  
-          print("\n------------------------------------------" +  
-                "\nTicket #" + str(ticket['id']) +  #prints id
-                "\nSubject: " + ticket['subject'] + #prints subject
-                "\nDescription: " + ticket['description'] + #prints description
-                "\nUpdated at: " + str(ticket['updated_at'].split("T")[0]) +  #prints updated_at
-                "\n------------------------------------------")
-          flag = False
+          while repeat_flag:
 
-        except ZendeskError:  #if ticket is not found
-            print("\nSorry, the ticket # you have entered is invalid, please try again")  #print this statement
+            repeat = input("View another ticket? (Y/N): ")  #obtain yes or no to displaying another ticket
 
-    elif choice == "2": #if user selected 2
+            if repeat == "Y" or repeat == "y":  #if user selects yes, ask for ticket_id again
+              repeat_flag = False
 
-        ticket_list = zendesk.tickets_list()  #list all tickets available
-        tickets = ticket_list['tickets']  #get the 'ticket' section of ticket_list
-        print("\n------------------------------------------")
+            elif repeat == "N" or repeat == "n":  #else if user selects no, go back to main menu
+              main()
 
-        for ticket in tickets:  #loops through all tickets
-            print("Ticket #" + str(ticket['id']) +  #prints id
-                  "\nSubject: " + ticket['subject'] + #prints subject
-                  "\nDescription: " + ticket['description'] + #prints description
-                  "\nUpdated at: " + ticket['updated_at'].split("T")[0] + "\n") #prints updated_at
+            else:
+              print("\nThe option you have selected is invalid, please enter Y or N.\n")  #else prompt user to enter only Y and N
 
-        print("------------------------------------------")
+      except KeyError:  #catches error if symbol is considered a key and cannot be found, prevents the application from crashing
+        print("\nThe Ticket # you have entered is invalid, please try again or enter B to return to the main menu.\n")
 
-if __name__ == '__main__':
+      except ZendeskError:  #catches error if the key is not in tickets_list, prevents the application from crashing 
+        print("\nThe Ticket # you have entered is invalid, please try again or enter B to return to the main menu.\n")
 
-    if len(sys.argv) < 4:
-      print("Error: 4 arguments required, only received " + str(len(sys.argv)) + "\n")
-      exit()
+def main():
 
-    print("\nLoading Zendesk Ticket Viewer...")
-    box = 42
+  flag = True
+
+  while flag: #while no desired input is obtained
+
+    #ask user for a selection from the menu
+    option = str(input("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\nPlease enter one of the following options:\n\n   1. Display a single ticket\n   2. Display all tickets\n   3. Exit\n------------------------------------------\nOption: "))
+
+    if option == "1": #if user selects 1
+      auth.display_one_ticket() #call function to display one ticket
+
+    elif option == "2": #if user selects 2
+      auth.display_all_tickets()  #call function to display all tickets
+
+    elif option == "3": #if user selects 3
+      sys.exit()  #exit the application
+
+    else:
+      print("\nSorry, the option you have selected is invalid, please select from the menu.") #if user selects something that is not in the menu, prompt user to enter only 1, 2 or 3
+
+if __name__ == "__main__":
+
+  print("\nLoading Zendesk Ticket Viewer...")
+  sys.stdout.flush()
+
+  for _ in range(42):  #performs loading bar
+    time.sleep(0.05)
+    sys.stdout.write("▉")
     sys.stdout.flush()
 
-    for i in range(box):  #performs loading boxes
-        time.sleep(0.05)
-        sys.stdout.write("▉")
-        sys.stdout.flush()
+  sys.stdout.write("\n")
 
-    sys.stdout.write("\n")
-
-    url = sys.argv[1] #url = 'https://kmcha49.zendesk.com'
-    email = sys.argv[2] #email = 'kmcha49@student.monash.edu'
-    pwd = sys.argv[3] #pwd = 'BCompSci2015'
-
-
-    try:  #attempts to initialise Zendesk account
-        zendesk = Zendesk(url, email, pwd)  #if successful
-        menu() #call menu()
-
-    except ZendeskError:  #if error occurs
-        print("Sorry, the API is currently unavailable, please try again later.") #print this statement
+  auth = ZendeskTicketViewer("https://kmcha49.zendesk.com", "kmcha49@student.monash.edu", "BCompSci2015") #calls the ZendeskTicketViewer class
+  main()  #proceed to load main menu
