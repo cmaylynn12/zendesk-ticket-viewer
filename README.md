@@ -20,7 +20,7 @@ $ git clone https://github.com/cmaylynn12/zendesk-ticket-viewer.git
 ```
 ##### Followed by this line which will bring up the menu 
 ```
-python3 zendesk-ticket-viewer.py
+python3 zendesk-ticket-viewer.py {username} {email} {password}
 ```
 #### How to use
 ##### Select from options 1, 2 or 3
@@ -80,7 +80,7 @@ Updated at: 2017-11-18
 ##### Option 3: Exit the application
 ## Quickstart
 ```python
-auth = ZendeskTicketViewer({your url}, {your email}, {your password})
+auth = ZendeskTicketViewer("https://" + sys.argv[1] + ".zendesk.com", sys.argv[2], sys.argv[3])
 main()
 ```
 ## Examples
