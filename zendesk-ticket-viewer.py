@@ -7,7 +7,6 @@ from zdesk import Zendesk, ZendeskError
 
 class ZendeskTicketViewer():
 
-
   def __init__(self, url, email, password): 
 
     self.url, self.email, self.password = url, email, password #initalises with url, email and password
@@ -87,15 +86,19 @@ def main():
 
 if __name__ == "__main__":
 
-  print("\nLoading Zendesk Ticket Viewer...")
-  sys.stdout.flush()
-
-  for _ in range(42):  #performs loading bar
-    time.sleep(0.05)
-    sys.stdout.write("▉")
+  try:
+    auth = ZendeskTicketViewer("https://" + str(sys.argv[1]) + ".zendesk.com", sys.argv[2], sys.argv[3]) #calls the ZendeskTicketViewer class
+    #if authentication is successful, do this
+    print("\nAuthentication Successful.\nLoading Zendesk Ticket Viewer...")
     sys.stdout.flush()
 
-  sys.stdout.write("\n")
+    for _ in range(42):  #performs loading bar
+      time.sleep(0.05)
+      sys.stdout.write("▉")
+      sys.stdout.flush()
 
-  auth = ZendeskTicketViewer("https://kmcha49.zendesk.com", "kmcha49@student.monash.edu", "BCompSci2015") #calls the ZendeskTicketViewer class
-  main()  #proceed to load main menu
+    sys.stdout.write("\n")
+    main()
+
+  except ZendeskError:  #if authentication failed, print this
+    print("\nSorry, the API is currently unavailable or the authentication failed. Please try again later.\n")
