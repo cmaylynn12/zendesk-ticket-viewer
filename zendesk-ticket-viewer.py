@@ -34,7 +34,7 @@ class ZendeskTicketViewer():
       ticket_id = input("Please enter Ticket #: ")  #gets ticket_id from user
 
       try:
-        if ticket_id == "B":  #if B, return to main menu
+        if ticket_id == "B" or ticket_id == "b":  #if B, return to main menu
           main()
         
         else:
