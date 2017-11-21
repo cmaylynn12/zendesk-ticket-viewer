@@ -24,13 +24,7 @@ class ZendeskTicketViewer():
     else:
       print("There are currently no tickets available") #if no ticket is available, print this
 
-  def display_one_ticket(self): #displays one ticket with a specific ticket_id, supplied by the user
-
-    flag = True
-
-    while flag:
-        
-      ticket_id = input("Please enter Ticket #: ")  #gets ticket_id from user
+  def display_one_ticket(self, ticket_id): #displays one ticket with a specific ticket_id, supplied by the user
 
       try:
         if ticket_id == "B" or ticket_id == "b":  #if B, return to main menu
@@ -59,6 +53,7 @@ class ZendeskTicketViewer():
 
       except KeyError:  #catches error if symbol is considered a key and cannot be found, prevents the application from crashing
         print("\nThe Ticket # you have entered is invalid, please try again or enter B to return to the main menu.\n")
+        return False
 
       except ZendeskError:  #catches error if the key is not in tickets_list, prevents the application from crashing 
         print("\nThe Ticket # you have entered is invalid, please try again or enter B to return to the main menu.\n")
@@ -73,7 +68,11 @@ def main():
     option = str(input("------------------------------------------\nWelcome to the Zendesk Ticket Viewer\n\nPlease enter one of the following options:\n\n   1. Display a single ticket\n   2. Display all tickets\n   3. Exit\n------------------------------------------\nOption: "))
 
     if option == "1": #if user selects 1
-      auth.display_one_ticket() #call function to display one ticket
+      flag = True
+      
+      while flag:
+        ticket_id = input('Please enter Ticket #: ')
+        auth.display_one_ticket(ticket_id) #call function to display one ticket
 
     elif option == "2": #if user selects 2
       auth.display_all_tickets()  #call function to display all tickets
