@@ -22,6 +22,9 @@ $ git clone https://github.com/cmaylynn12/zendesk-ticket-viewer.git
 ```
 python3 zendesk-ticket-viewer.py {username} {email} {password}
 ```
+{username} i.e. your url is https://{username}.zendesk.com
+{email} email that is associated with your zendesk account
+{password} used to secure the account
 #### How to use
 ##### Select from options 1, 2 or 3
 ```
